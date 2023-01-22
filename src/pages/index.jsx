@@ -6,6 +6,7 @@ import Feeds from "../components/feeds";
 function App() {
   const [hackewnewsFeeds, setHackewnewsFeeds] = useState("");
   const [redditFeeds, setRedditFeeds] = useState("");
+  const [githubTrendingFeeds, setGithubTrendingFeeds] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -17,6 +18,11 @@ function App() {
       if (redditFeeds.length === 0) {
         const feeds = await invoke("fetch_reddit_feeds");
         setRedditFeeds(feeds);
+      }
+
+      if (githubTrendingFeeds.length === 0) {
+        const feeds = await invoke("fetch_github_trending_feeds");
+        setGithubTrendingFeeds(feeds);
       }
     })();
   }, []);
@@ -37,6 +43,10 @@ function App() {
         <div className="flex-2 mb-10 mr-10">
           <h4 className="font-bold text-[#ff4500]">Reddit</h4>
           <Feeds feeds={parseFeeds(redditFeeds)} />
+        </div>
+        <div className="flex-2 mb-10 mr-10">
+          <h4 className="font-bold text-[#24292f]">GitHub Trending</h4>
+          <Feeds feeds={parseFeeds(githubTrendingFeeds)} />
         </div>
       </div>
     </div>
