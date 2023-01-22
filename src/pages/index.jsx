@@ -21,10 +21,6 @@ function App() {
     })();
   }, []);
 
-  async function greet() {
-    setGreetMsg(await invoke("greet", { name }));
-  }
-
   const parseFeeds = (feeds) => {
     if (feeds.length === 0 ) return [];
     return JSON.parse(feeds);
