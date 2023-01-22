@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
   const [hackewnewsFeeds, setHackewnewsFeeds] = useState("");
   const [redditFeeds, setRedditFeeds] = useState("");
-  const [name, setName] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -66,22 +64,6 @@ function App() {
           ))}
         </div>
       </div>
-
-      <div className="row">
-        <div>
-          <input
-            id="greet-input"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            onChange={(e) => setName(e.currentTarget.value)}
-            placeholder="Enter a URL"
-          />
-          <button type="button" onClick={() => greet()}>
-            Register
-          </button>
-        </div>
-      </div>
-
-      <p>{greetMsg}</p>
     </div>
   );
 }
