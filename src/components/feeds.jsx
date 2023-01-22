@@ -6,9 +6,11 @@ const Feeds = ({ feeds }) => {
                     <a href={feed.link} target="_blank" rel="noopener noreferrer" >
                         <h5 className="mb-1 hover:underline text-gray-900">{feed.title}</h5>
                     </a>
-                    <a href={feed.comments} target="_blank" rel="noopener noreferrer" className="text-sm inline-flex items-right text-gray-500 hover:underline">
-                        Comments
-                    </a>
+                    {feed.comments.length > 0 &&
+                        <a href={feed.comments} target="_blank" rel="noopener noreferrer" className="text-sm inline-flex items-right text-gray-500 hover:underline">
+                            Comments
+                        </a>
+                    }
                 </div>
             ))}
         </>
