@@ -5,7 +5,19 @@
 
 use std::error::Error;
 use serde::{Deserialize, Serialize};
-use std::{thread, time, fs, str};
+use std::{thread, time, fs, str, collections::HashMap, sync::Mutex};
+
+ struct Storage {
+   store: Mutex<HashMap<String, String>>,
+ }
+
+#[derive(Debug, Serialize, Deserialize)]
+struct FeedItem {
+    title: String,
+    link: String,
+    description: String,
+    comments: String,
+}
 
 fn fetch_feeds_from_url(url: &str) -> Result<String, Box<dyn Error>> {
     let body = reqwest::blocking::get(url)?.bytes()?;
@@ -16,7 +28,12 @@ fn fetch_feeds_from_file(path: &str) -> Result<String, Box<dyn Error>> {
     Ok(fs::read_to_string(path)?)
 }
 
-fn fetch_feeds(url: &str) -> String {
+fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> String {
+    match storage.store.lock().unwrap().get(url) {
+        Some(v) => return v.to_string(),
+        None => {}
+    }
+
     let body= match fetch_feeds_from_url(url).unwrap().parse::<syndication::Feed>() {
         Ok(v) => v,
         Err(_e) => {
@@ -44,34 +61,29 @@ fn fetch_feeds(url: &str) -> String {
         }
     };
 
-    serde_json::to_string(&feed_items).unwrap()
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct FeedItem {
-    title: String,
-    link: String,
-    description: String,
-    comments: String,
+    let v = serde_json::to_string(&feed_items).unwrap();
+    storage.store.lock().unwrap().insert(url.to_string(), v.to_string());
+    v
 }
 
 #[tauri::command]
-fn fetch_hackernews_feeds() -> String {
-    fetch_feeds("https://news.ycombinator.com/rss")
+fn fetch_hackernews_feeds(storage: tauri::State<Storage>) -> String {
+    fetch_feeds("https://news.ycombinator.com/rss", storage)
 }
 
 #[tauri::command]
-fn fetch_reddit_feeds() -> String {
-    fetch_feeds("https://www.reddit.com/r/news/.rss")
+fn fetch_reddit_feeds(storage: tauri::State<Storage>) -> String {
+    fetch_feeds("https://www.reddit.com/r/news/.rss", storage)
 }
 
 #[tauri::command]
-fn fetch_github_trending_feeds() -> String {
-    fetch_feeds("https://github-rss.alexi.sh/feeds/daily/all.xml")
+fn fetch_github_trending_feeds(storage: tauri::State<Storage>) -> String {
+    fetch_feeds("https://github-rss.alexi.sh/feeds/daily/all.xml", storage)
 }
 
 fn main() {
     tauri::Builder::default()
+        .manage(Storage { store: Default::default() })
         .invoke_handler(tauri::generate_handler![fetch_hackernews_feeds, fetch_reddit_feeds, fetch_github_trending_feeds])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
