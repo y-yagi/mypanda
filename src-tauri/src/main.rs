@@ -29,10 +29,7 @@ fn fetch_feeds_from_file(path: &str) -> Result<String, Box<dyn Error>> {
 }
 
 fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> String {
-    match storage.store.lock().unwrap().get(url) {
-        Some(v) => return v.to_string(),
-        None => {}
-    }
+    if let Some(v) = storage.store.lock().unwrap().get(url) { return v.to_string() }
 
     let body= match fetch_feeds_from_url(url).unwrap().parse::<syndication::Feed>() {
         Ok(v) => v,
