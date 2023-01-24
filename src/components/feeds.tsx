@@ -1,4 +1,11 @@
-const Feeds = ({ feeds }) => {
+import React from "react";
+import Feed from "../types/Feed";
+
+type Props = {
+    feeds: Feed[];
+};
+
+const Feeds = ({ feeds }: Props) => {
     return (
         <>
             {feeds.map((feed) => (

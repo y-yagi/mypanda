@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import "../components/feeds";
 import Feeds from "../components/feeds";
+import Feed from "../types/Feed";
 
 function App() {
   const [hackewnewsFeeds, setHackewnewsFeeds] = useState("");
@@ -12,24 +13,24 @@ function App() {
     (async () => {
       if (hackewnewsFeeds.length === 0) {
         const feeds = await invoke("fetch_hackernews_feeds");
-        setHackewnewsFeeds(feeds);
+        setHackewnewsFeeds(feeds as string);
       }
 
       if (redditFeeds.length === 0) {
         const feeds = await invoke("fetch_reddit_feeds");
-        setRedditFeeds(feeds);
+        setRedditFeeds(feeds as string);
       }
 
       if (githubTrendingFeeds.length === 0) {
         const feeds = await invoke("fetch_github_trending_feeds");
-        setGithubTrendingFeeds(feeds);
+        setGithubTrendingFeeds(feeds as string);
       }
     })();
   }, []);
 
-  const parseFeeds = (feeds) => {
+  const parseFeeds = (feeds: string): Feed[] => {
     if (feeds.length === 0 ) return [];
-    return JSON.parse(feeds);
+    return JSON.parse(feeds) as Feed[];
   }
 
   return (
