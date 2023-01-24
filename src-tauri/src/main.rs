@@ -7,6 +7,8 @@ use std::error::Error;
 use serde::{Deserialize, Serialize};
 use std::{thread, time, str, collections::HashMap, sync::Mutex};
 
+const SEC_FOR_WAIT_RETRY: u64 = 2;
+
  struct Storage {
    store: Mutex<HashMap<String, String>>,
  }
@@ -30,7 +32,7 @@ fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> Result<String, Box<
     let body= match fetch_feeds_from_url(url)?.parse::<syndication::Feed>() {
         Ok(v) => v,
         Err(_e) => {
-            thread::sleep(time::Duration::from_secs(5));
+            thread::sleep(time::Duration::from_secs(SEC_FOR_WAIT_RETRY));
             fetch_feeds_from_url(url)?.parse::<syndication::Feed>()?
         },
     };
