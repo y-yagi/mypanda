@@ -24,10 +24,6 @@ fn fetch_feeds_from_url(url: &str) -> Result<String, Box<dyn Error>> {
     Ok(str::from_utf8(&body)?.to_string())
 }
 
-fn fetch_feeds_from_file(path: &str) -> Result<String, Box<dyn Error>> {
-    Ok(fs::read_to_string(path)?)
-}
-
 fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> Result<String, Box<dyn Error>> {
     if let Some(v) = storage.store.lock().unwrap().get(url) { return Ok(v.to_string()) }
 
