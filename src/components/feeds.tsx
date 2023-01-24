@@ -4,9 +4,10 @@ import Feed from "../types/Feed";
 type Props = {
     feeds: Feed[];
     error: string;
+    borderColor: string;
 };
 
-const Feeds = ({ feeds, error }: Props) => {
+const Feeds = ({ feeds, error, borderColor }: Props) => {
     return (
         <>
             {error.length > 0 &&
@@ -20,7 +21,7 @@ const Feeds = ({ feeds, error }: Props) => {
                 </div>
             }
             {feeds.map((feed) => (
-                <div className="max-w-sm p-1 bg-white border border-rose-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 text-left mb-1">
+                <div className={`max-w-sm p-1 bg-white border ${borderColor} rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 text-left mb-1`}>
                     <a href={feed.link} target="_blank" rel="noopener noreferrer" >
                         <h5 className="text-sm mb-1 hover:underline text-gray-900">{feed.title}</h5>
                     </a>

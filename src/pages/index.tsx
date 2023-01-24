@@ -55,15 +55,15 @@ function App() {
       <div className="flex flex-row">
         <div className="flex-2 mb-10 mr-10">
           <h4 className="font-bold text-[#ff6600]">Hacker News</h4>
-          <Feeds feeds={parseFeeds(hackewnewsFeeds)} error={hackewnewsError} />
+          <Feeds feeds={parseFeeds(hackewnewsFeeds)} error={hackewnewsError} borderColor="border-[#ff6600]" />
         </div>
         <div className="flex-2 mb-10 mr-10">
           <h4 className="font-bold text-[#ff4500]">Reddit</h4>
-          <Feeds feeds={parseFeeds(redditFeeds)} error={redditError} />
+          <Feeds feeds={parseFeeds(redditFeeds)} error={redditError} borderColor="border-[#ff4500]" />
         </div>
         <div className="flex-2 mb-10 mr-10">
           <h4 className="font-bold text-[#24292f]">GitHub Trending</h4>
-          <Feeds feeds={parseFeeds(githubTrendingFeeds)} error={githubTrendingError} />
+          <Feeds feeds={parseFeeds(githubTrendingFeeds)} error={githubTrendingError} borderColor="border-[#24292f]" />
         </div>
       </div>
     </div>
