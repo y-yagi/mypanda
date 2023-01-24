@@ -28,14 +28,14 @@ fn fetch_feeds_from_file(path: &str) -> Result<String, Box<dyn Error>> {
     Ok(fs::read_to_string(path)?)
 }
 
-fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> String {
-    if let Some(v) = storage.store.lock().unwrap().get(url) { return v.to_string() }
+fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> Result<String, Box<dyn Error>> {
+    if let Some(v) = storage.store.lock().unwrap().get(url) { return Ok(v.to_string()) }
 
-    let body= match fetch_feeds_from_url(url).unwrap().parse::<syndication::Feed>() {
+    let body= match fetch_feeds_from_url(url)?.parse::<syndication::Feed>() {
         Ok(v) => v,
         Err(_e) => {
             thread::sleep(time::Duration::from_secs(5));
-            fetch_feeds_from_url(url).unwrap().parse::<syndication::Feed>().unwrap()
+            fetch_feeds_from_url(url)?.parse::<syndication::Feed>()?
         },
     };
 
@@ -60,22 +60,22 @@ fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> String {
 
     let v = serde_json::to_string(&feed_items).unwrap();
     storage.store.lock().unwrap().insert(url.to_string(), v.to_string());
-    v
+    Ok(v)
 }
 
 #[tauri::command]
-fn fetch_hackernews_feeds(storage: tauri::State<Storage>) -> String {
-    fetch_feeds("https://news.ycombinator.com/rss", storage)
+fn fetch_hackernews_feeds(storage: tauri::State<Storage>) -> Result<String, String> {
+    fetch_feeds("https://news.ycombinator.com/rss", storage).map_err(|err| err.to_string())
 }
 
 #[tauri::command]
-fn fetch_reddit_feeds(storage: tauri::State<Storage>) -> String {
-    fetch_feeds("https://www.reddit.com/r/news/.rss", storage)
+fn fetch_reddit_feeds(storage: tauri::State<Storage>) -> Result<String, String> {
+    fetch_feeds("https://www.reddit.com/r/news/.rss", storage).map_err(|err| err.to_string())
 }
 
 #[tauri::command]
-fn fetch_github_trending_feeds(storage: tauri::State<Storage>) -> String {
-    fetch_feeds("https://github-rss.alexi.sh/feeds/daily/all.xml", storage)
+fn fetch_github_trending_feeds(storage: tauri::State<Storage>) -> Result<String, String>{
+    fetch_feeds("https://github-rss.alexi.sh/feeds/daily/all.xml", storage).map_err(|err| err.to_string())
 }
 
 fn main() {
