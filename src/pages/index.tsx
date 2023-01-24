@@ -12,14 +12,13 @@ function App() {
   const [redditError, setRedditError] = useState("");
   const [githubTrendingError, setGithubTrendingError] = useState("");
 
-
   useEffect(() => {
     (async () => {
       if (hackewnewsFeeds.length === 0) {
         try {
           const feeds = await invoke("fetch_hackernews_feeds");
           setHackewnewsFeeds(feeds as string);
-        } catch(err) {
+        } catch (err) {
           setGithubTrendingError(err);
         }
       }
@@ -28,7 +27,7 @@ function App() {
         try {
           const feeds = await invoke("fetch_reddit_feeds");
           setRedditFeeds(feeds as string);
-        } catch(err) {
+        } catch (err) {
           setRedditError(err);
         }
       }
@@ -37,7 +36,7 @@ function App() {
         try {
           const feeds = await invoke("fetch_github_trending_feeds");
           setGithubTrendingFeeds(feeds as string);
-        } catch(err) {
+        } catch (err) {
           setGithubTrendingError(err);
         }
       }
@@ -45,9 +44,9 @@ function App() {
   }, []);
 
   const parseFeeds = (feeds: string): Feed[] => {
-    if (feeds.length === 0 ) return [];
+    if (feeds.length === 0) return [];
     return JSON.parse(feeds) as Feed[];
-  }
+  };
 
   return (
     <div className="container">
@@ -55,15 +54,27 @@ function App() {
       <div className="flex flex-row">
         <div className="flex-2 mb-10 mr-10">
           <h4 className="font-bold text-[#ff6600]">Hacker News</h4>
-          <Feeds feeds={parseFeeds(hackewnewsFeeds)} error={hackewnewsError} borderColor="border-[#ff6600]" />
+          <Feeds
+            feeds={parseFeeds(hackewnewsFeeds)}
+            error={hackewnewsError}
+            borderColor="border-[#ff6600]"
+          />
         </div>
         <div className="flex-2 mb-10 mr-10">
           <h4 className="font-bold text-[#ff4500]">Reddit</h4>
-          <Feeds feeds={parseFeeds(redditFeeds)} error={redditError} borderColor="border-[#ff4500]" />
+          <Feeds
+            feeds={parseFeeds(redditFeeds)}
+            error={redditError}
+            borderColor="border-[#ff4500]"
+          />
         </div>
         <div className="flex-2 mb-10 mr-10">
           <h4 className="font-bold text-[#24292f]">GitHub Trending</h4>
-          <Feeds feeds={parseFeeds(githubTrendingFeeds)} error={githubTrendingError} borderColor="border-[#24292f]" />
+          <Feeds
+            feeds={parseFeeds(githubTrendingFeeds)}
+            error={githubTrendingError}
+            borderColor="border-[#24292f]"
+          />
         </div>
       </div>
     </div>

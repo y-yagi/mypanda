@@ -1,0 +1,5 @@
+/.next/
+*.md
+/.github/
+/src-tauri/
+/dist/
