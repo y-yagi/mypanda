@@ -3,11 +3,22 @@ import Feed from "../types/Feed";
 
 type Props = {
     feeds: Feed[];
+    error: string;
 };
 
-const Feeds = ({ feeds }: Props) => {
+const Feeds = ({ feeds, error }: Props) => {
     return (
         <>
+            {error.length > 0 &&
+                <div role="alert" className="mb-2">
+                    <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+                        Error
+                    </div>
+                    <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                        <p>{error}</p>
+                    </div>
+                </div>
+            }
             {feeds.map((feed) => (
                 <div className="max-w-sm p-1 bg-white border border-rose-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 text-left mb-1">
                     <a href={feed.link} target="_blank" rel="noopener noreferrer" >
