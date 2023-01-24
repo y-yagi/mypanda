@@ -5,7 +5,7 @@
 
 use std::error::Error;
 use serde::{Deserialize, Serialize};
-use std::{thread, time, fs, str, collections::HashMap, sync::Mutex};
+use std::{thread, time, str, collections::HashMap, sync::Mutex};
 
  struct Storage {
    store: Mutex<HashMap<String, String>>,
