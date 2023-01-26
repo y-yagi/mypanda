@@ -18,6 +18,7 @@ function App() {
         try {
           const feeds = await invoke("fetch_hackernews_feeds");
           setHackewnewsFeeds(feeds as string);
+          setHackewnewsError("");
         } catch (err) {
           setHackewnewsError(err);
         }
@@ -27,6 +28,7 @@ function App() {
         try {
           const feeds = await invoke("fetch_reddit_feeds");
           setRedditFeeds(feeds as string);
+          setRedditError("");
         } catch (err) {
           setRedditError(err);
         }
@@ -36,6 +38,7 @@ function App() {
         try {
           const feeds = await invoke("fetch_github_trending_feeds");
           setGithubTrendingFeeds(feeds as string);
+          setGithubTrendingError("");
         } catch (err) {
           setGithubTrendingError(err);
         }
