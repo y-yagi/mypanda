@@ -19,7 +19,7 @@ function App() {
           const feeds = await invoke("fetch_hackernews_feeds");
           setHackewnewsFeeds(feeds as string);
         } catch (err) {
-          setGithubTrendingError(err);
+          setHackewnewsError(err);
         }
       }
 
