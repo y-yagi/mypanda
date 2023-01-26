@@ -5,9 +5,7 @@
 
 use std::error::Error;
 use serde::{Deserialize, Serialize};
-use std::{thread, time, str, collections::HashMap, sync::Mutex};
-
-const SEC_FOR_WAIT_RETRY: u64 = 2;
+use std::{str, collections::HashMap, sync::Mutex};
 
  struct Storage {
    store: Mutex<HashMap<String, String>>,
@@ -21,21 +19,11 @@ struct FeedItem {
     comments: String,
 }
 
-fn fetch_feeds_from_url(url: &str) -> Result<String, Box<dyn Error>> {
-    let body = reqwest::blocking::get(url)?.bytes()?;
-    Ok(str::from_utf8(&body)?.to_string())
-}
-
-fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> Result<String, Box<dyn Error>> {
+async fn fetch_feeds(url: &str, storage: tauri::State<'_, Storage>) -> Result<String, Box<dyn Error>> {
     if let Some(v) = storage.store.lock().unwrap().get(url) { return Ok(v.to_string()) }
 
-    let body= match fetch_feeds_from_url(url)?.parse::<syndication::Feed>() {
-        Ok(v) => v,
-        Err(_e) => {
-            thread::sleep(time::Duration::from_secs(SEC_FOR_WAIT_RETRY));
-            fetch_feeds_from_url(url)?.parse::<syndication::Feed>()?
-        },
-    };
+    let response = reqwest::get(url).await?.bytes().await?;
+    let body = str::from_utf8(&response)?.to_string().parse::<syndication::Feed>()?;
 
     let feed_items: Vec<FeedItem> = match body {
         syndication::Feed::Atom(atom_feed) => {
@@ -61,19 +49,19 @@ fn fetch_feeds(url: &str, storage: tauri::State<Storage>) -> Result<String, Box<
     Ok(v)
 }
 
-#[tauri::command]
-fn fetch_hackernews_feeds(storage: tauri::State<Storage>) -> Result<String, String> {
-    fetch_feeds("https://news.ycombinator.com/rss", storage).map_err(|err| err.to_string())
+#[tauri::command(async)]
+async fn fetch_hackernews_feeds(storage: tauri::State<'_, Storage>) -> Result<String, String> {
+    fetch_feeds("https://news.ycombinator.com/rss", storage).await.map_err(|err| err.to_string())
 }
 
-#[tauri::command]
-fn fetch_reddit_feeds(storage: tauri::State<Storage>) -> Result<String, String> {
-    fetch_feeds("https://www.reddit.com/r/news/.rss", storage).map_err(|err| err.to_string())
+#[tauri::command(async)]
+async fn fetch_reddit_feeds(storage: tauri::State<'_, Storage>) -> Result<String, String> {
+    fetch_feeds("https://www.reddit.com/r/news/.rss", storage).await.map_err(|err| err.to_string())
 }
 
-#[tauri::command]
-fn fetch_github_trending_feeds(storage: tauri::State<Storage>) -> Result<String, String>{
-    fetch_feeds("https://github-rss.alexi.sh/feeds/daily/all.xml", storage).map_err(|err| err.to_string())
+#[tauri::command(async)]
+async fn fetch_github_trending_feeds(storage: tauri::State<'_, Storage>) -> Result<String, String>{
+    fetch_feeds("https://github-rss.alexi.sh/feeds/daily/all.xml", storage).await.map_err(|err| err.to_string())
 }
 
 fn main() {
