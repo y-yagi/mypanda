@@ -6,6 +6,7 @@
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::{collections::HashMap, str, sync::Mutex};
+use tauri::Manager;
 
 struct Storage {
     store: Mutex<HashMap<String, String>>,
@@ -87,6 +88,15 @@ async fn fetch_github_trending_feeds(storage: tauri::State<'_, Storage>) -> Resu
 
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            #[cfg(debug_assertions)]
+            {
+                let window = app.get_window("main").unwrap();
+                window.open_devtools();
+                window.close_devtools();
+            }
+            Ok(())
+        })
         .manage(Storage {
             store: Default::default(),
         })
