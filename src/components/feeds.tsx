@@ -20,9 +20,10 @@ const Feeds = ({ feeds, error, borderColor }: Props) => {
           </div>
         </div>
       )}
-      {feeds.map((feed) => (
+      {feeds.map((feed, index) => (
         <div
           className={`max-w-sm p-1 bg-white border ${borderColor} rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 text-left mb-1`}
+          key={index}
         >
           <a href={feed.link} target="_blank" rel="noopener noreferrer">
             <h5 className="text-sm mb-1 hover:underline text-gray-900">
