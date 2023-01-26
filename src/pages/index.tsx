@@ -15,36 +15,48 @@ function App() {
   useEffect(() => {
     (async () => {
       if (hackewnewsFeeds.length === 0) {
-        try {
-          const feeds = await invoke("fetch_hackernews_feeds");
-          setHackewnewsFeeds(feeds as string);
-          setHackewnewsError("");
-        } catch (err) {
-          setHackewnewsError(err);
-        }
+        await fetchHackenewsFeed();
       }
 
       if (redditFeeds.length === 0) {
-        try {
-          const feeds = await invoke("fetch_reddit_feeds");
-          setRedditFeeds(feeds as string);
-          setRedditError("");
-        } catch (err) {
-          setRedditError(err);
-        }
+        await fetchRedditFeed();
       }
 
       if (githubTrendingFeeds.length === 0) {
-        try {
-          const feeds = await invoke("fetch_github_trending_feeds");
-          setGithubTrendingFeeds(feeds as string);
-          setGithubTrendingError("");
-        } catch (err) {
-          setGithubTrendingError(err);
-        }
+        await fetchGithubFeed();
       }
     })();
   }, []);
+
+  const fetchHackenewsFeed = async () => {
+    try {
+      const feeds = await invoke("fetch_hackernews_feeds");
+      setHackewnewsFeeds(feeds as string);
+      setHackewnewsError("");
+    } catch (err) {
+      setHackewnewsError(err);
+    }
+  };
+
+  const fetchRedditFeed = async () => {
+    try {
+      const feeds = await invoke("fetch_reddit_feeds");
+      setRedditFeeds(feeds as string);
+      setRedditError("");
+    } catch (err) {
+      setRedditError(err);
+    }
+  };
+
+  const fetchGithubFeed = async () => {
+    try {
+      const feeds = await invoke("fetch_github_trending_feeds");
+      setGithubTrendingFeeds(feeds as string);
+      setGithubTrendingError("");
+    } catch (err) {
+      setGithubTrendingError(err);
+    }
+  };
 
   const parseFeeds = (feeds: string): Feed[] => {
     if (feeds.length === 0) return [];
@@ -56,7 +68,14 @@ function App() {
       <h1 className="text-3xl text-red-300 font-bold underline mb-10">Yomu</h1>
       <div className="flex flex-row">
         <div className="flex-2 mb-10 mr-10">
-          <h4 className="font-bold text-[#ff6600]">Hacker News</h4>
+          <a
+            href="#"
+            onClick={async () => {
+              await fetchHackenewsFeed();
+            }}
+          >
+            <h4 className="font-bold text-[#ff6600]">Hacker News</h4>
+          </a>
           <Feeds
             feeds={parseFeeds(hackewnewsFeeds)}
             error={hackewnewsError}
@@ -64,7 +83,14 @@ function App() {
           />
         </div>
         <div className="flex-2 mb-10 mr-10">
-          <h4 className="font-bold text-[#ff4500]">Reddit</h4>
+          <a
+            href="#"
+            onClick={async () => {
+              await fetchRedditFeed();
+            }}
+          >
+            <h4 className="font-bold text-[#ff4500]">Reddit</h4>
+          </a>
           <Feeds
             feeds={parseFeeds(redditFeeds)}
             error={redditError}
@@ -72,7 +98,14 @@ function App() {
           />
         </div>
         <div className="flex-2 mb-10 mr-10">
-          <h4 className="font-bold text-[#24292f]">GitHub Trending</h4>
+          <a
+            href="#"
+            onClick={async () => {
+              await fetchGithubFeed();
+            }}
+          >
+            <h4 className="font-bold text-[#24292f]">GitHub Trending</h4>
+          </a>
           <Feeds
             feeds={parseFeeds(githubTrendingFeeds)}
             error={githubTrendingError}
