@@ -5,31 +5,37 @@ import Feeds from "../components/feeds";
 import Feed from "../types/Feed";
 
 function App() {
-  const [hackewnewsFeeds, setHackewnewsFeeds] = useState("");
+  const [hackernewsFeeds, sethackernewsFeeds] = useState("");
   const [redditFeeds, setRedditFeeds] = useState("");
   const [githubTrendingFeeds, setGithubTrendingFeeds] = useState("");
   const [vergeFeeds, setVergeFeeds] = useState("");
-  const [hackewnewsError, setHackewnewsError] = useState("");
+  const [hackernewsError, sethackernewsError] = useState("");
   const [redditError, setRedditError] = useState("");
   const [githubTrendingError, setGithubTrendingError] = useState("");
   const [vergeError, setVergeError] = useState("");
+  const sites = {
+    hackernews: [sethackernewsFeeds, sethackernewsError],
+    reddit: [setRedditFeeds, setRedditError],
+    github_trending: [setGithubTrendingFeeds, setGithubTrendingError],
+    verge: [setVergeFeeds, setVergeError],
+  };
 
   useEffect(() => {
     (async () => {
-      if (hackewnewsFeeds.length === 0) {
-        await fetchHackenewsFeed();
+      if (hackernewsFeeds.length === 0) {
+        await fetchFeeds("hackernews");
       }
 
       if (redditFeeds.length === 0) {
-        await fetchRedditFeed();
+        await fetchFeeds("reddit");
       }
 
       if (githubTrendingFeeds.length === 0) {
-        await fetchGithubFeed();
+        await fetchFeeds("github_trending");
       }
 
       if (vergeFeeds.length === 0) {
-        await fetchVergeFeed();
+        await fetchFeeds("verge");
       }
     })();
 
@@ -42,43 +48,14 @@ function App() {
     }
   };
 
-  const fetchHackenewsFeed = async () => {
+  const fetchFeeds = async (site: string) => {
+    const functions = sites[site];
     try {
-      const feeds = await invoke("fetch_hackernews_feeds");
-      setHackewnewsFeeds(feeds as string);
-      setHackewnewsError("");
+      const feeds = await invoke(`fetch_${site}_feeds`);
+      functions[0](feeds as string);
+      functions[1]("");
     } catch (err) {
-      setHackewnewsError(err);
-    }
-  };
-
-  const fetchRedditFeed = async () => {
-    try {
-      const feeds = await invoke("fetch_reddit_feeds");
-      setRedditFeeds(feeds as string);
-      setRedditError("");
-    } catch (err) {
-      setRedditError(err);
-    }
-  };
-
-  const fetchGithubFeed = async () => {
-    try {
-      const feeds = await invoke("fetch_github_trending_feeds");
-      setGithubTrendingFeeds(feeds as string);
-      setGithubTrendingError("");
-    } catch (err) {
-      setGithubTrendingError(err);
-    }
-  };
-
-  const fetchVergeFeed = async () => {
-    try {
-      const feeds = await invoke("fetch_verge_feeds");
-      setVergeFeeds(feeds as string);
-      setVergeError("");
-    } catch (err) {
-      setVergeError(err);
+      functions[1](err);
     }
   };
 
@@ -95,14 +72,14 @@ function App() {
           <a
             href="#"
             onClick={async () => {
-              await fetchHackenewsFeed();
+              await fetchFeeds("hackernews");
             }}
           >
             <h4 className="font-bold text-[#ff6600]">Hacker News</h4>
           </a>
           <Feeds
-            feeds={parseFeeds(hackewnewsFeeds)}
-            error={hackewnewsError}
+            feeds={parseFeeds(hackernewsFeeds)}
+            error={hackernewsError}
             borderColor="border-[#ff6600]"
           />
         </div>
@@ -110,7 +87,7 @@ function App() {
           <a
             href="#"
             onClick={async () => {
-              await fetchRedditFeed();
+              await fetchFeeds("reddit");
             }}
           >
             <h4 className="font-bold text-[#ff4500]">Reddit</h4>
@@ -125,7 +102,7 @@ function App() {
           <a
             href="#"
             onClick={async () => {
-              await fetchGithubFeed();
+              await fetchFeeds("gihub_feed");
             }}
           >
             <h4 className="font-bold text-[#24292f]">GitHub Trending</h4>
@@ -140,7 +117,7 @@ function App() {
           <a
             href="#"
             onClick={async () => {
-              await fetchVergeFeed();
+              await fetchFeeds("verge");
             }}
           >
             <h4 className="font-bold text-[#5100ff]">Verge</h4>
