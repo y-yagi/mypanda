@@ -8,9 +8,11 @@ function App() {
   const [hackewnewsFeeds, setHackewnewsFeeds] = useState("");
   const [redditFeeds, setRedditFeeds] = useState("");
   const [githubTrendingFeeds, setGithubTrendingFeeds] = useState("");
+  const [vergeFeeds, setVergeFeeds] = useState("");
   const [hackewnewsError, setHackewnewsError] = useState("");
   const [redditError, setRedditError] = useState("");
   const [githubTrendingError, setGithubTrendingError] = useState("");
+  const [vergeError, setVergeError] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -24,6 +26,10 @@ function App() {
 
       if (githubTrendingFeeds.length === 0) {
         await fetchGithubFeed();
+      }
+
+      if (vergeFeeds.length === 0) {
+        await fetchVergeFeed();
       }
     })();
 
@@ -63,6 +69,16 @@ function App() {
       setGithubTrendingError("");
     } catch (err) {
       setGithubTrendingError(err);
+    }
+  };
+
+  const fetchVergeFeed = async () => {
+    try {
+      const feeds = await invoke("fetch_verge_feeds");
+      setVergeFeeds(feeds as string);
+      setVergeError("");
+    } catch (err) {
+      setVergeError(err);
     }
   };
 
@@ -118,6 +134,21 @@ function App() {
             feeds={parseFeeds(githubTrendingFeeds)}
             error={githubTrendingError}
             borderColor="border-[#24292f]"
+          />
+        </div>
+        <div className="flex-2 mb-10 mr-10">
+          <a
+            href="#"
+            onClick={async () => {
+              await fetchVergeFeed();
+            }}
+          >
+            <h4 className="font-bold text-[#5100ff]">Verge</h4>
+          </a>
+          <Feeds
+            feeds={parseFeeds(vergeFeeds)}
+            error={vergeError}
+            borderColor="border-[#5100ff]"
           />
         </div>
       </div>

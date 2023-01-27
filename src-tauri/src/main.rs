@@ -86,6 +86,13 @@ async fn fetch_github_trending_feeds(storage: tauri::State<'_, Storage>) -> Resu
         .map_err(|err| err.to_string())
 }
 
+#[tauri::command(async)]
+async fn fetch_verge_feeds(storage: tauri::State<'_, Storage>) -> Result<String, String> {
+    fetch_feeds("https://www.theverge.com/rss/index.xml", storage)
+        .await
+        .map_err(|err| err.to_string())
+}
+
 #[tauri::command]
 async fn close_window(window: tauri::Window) {
     window.close().unwrap();
@@ -110,7 +117,8 @@ fn main() {
             close_window,
             fetch_hackernews_feeds,
             fetch_reddit_feeds,
-            fetch_github_trending_feeds
+            fetch_github_trending_feeds,
+            fetch_verge_feeds
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
