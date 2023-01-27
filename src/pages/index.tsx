@@ -26,7 +26,15 @@ function App() {
         await fetchGithubFeed();
       }
     })();
+
+    document.addEventListener("keydown", onKeyDown);
   }, []);
+
+  const onKeyDown = async (event: KeyboardEvent) => {
+    if (event.key === "w" && event.ctrlKey) {
+      await invoke("close_window");
+    }
+  };
 
   const fetchHackenewsFeed = async () => {
     try {

@@ -86,6 +86,11 @@ async fn fetch_github_trending_feeds(storage: tauri::State<'_, Storage>) -> Resu
         .map_err(|err| err.to_string())
 }
 
+#[tauri::command]
+async fn close_window(window: tauri::Window) {
+    window.close().unwrap();
+}
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -102,6 +107,7 @@ fn main() {
             store: Default::default(),
         })
         .invoke_handler(tauri::generate_handler![
+            close_window,
             fetch_hackernews_feeds,
             fetch_reddit_feeds,
             fetch_github_trending_feeds
