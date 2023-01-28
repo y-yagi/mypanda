@@ -14,29 +14,20 @@ function App() {
   const [githubTrendingError, setGithubTrendingError] = useState("");
   const [vergeError, setVergeError] = useState("");
   const sites = {
-    hackernews: [sethackernewsFeeds, sethackernewsError],
-    reddit: [setRedditFeeds, setRedditError],
-    github_trending: [setGithubTrendingFeeds, setGithubTrendingError],
-    verge: [setVergeFeeds, setVergeError],
+    hackernews: { functions: [sethackernewsFeeds, sethackernewsError], state: hackernewsFeeds },
+    reddit: { functions: [setRedditFeeds, setRedditError], state: redditFeeds, },
+    github_trending: { functions: [setGithubTrendingFeeds, setGithubTrendingError], state: githubTrendingFeeds },
+    verge: { functions: [setVergeFeeds, setVergeError], state: vergeFeeds },
   };
 
   useEffect(() => {
     (async () => {
-      if (hackernewsFeeds.length === 0) {
-        await fetchFeeds("hackernews");
-      }
-
-      if (redditFeeds.length === 0) {
-        await fetchFeeds("reddit");
-      }
-
-      if (githubTrendingFeeds.length === 0) {
-        await fetchFeeds("github_trending");
-      }
-
-      if (vergeFeeds.length === 0) {
-        await fetchFeeds("verge");
-      }
+      Object.keys(sites).forEach(async (site) => {
+        const obj = sites[site];
+        if (obj["state"].length === 0) {
+          await fetchFeeds(site);
+        }
+      })
     })();
 
     document.addEventListener("keydown", onKeyDown);
@@ -49,7 +40,7 @@ function App() {
   };
 
   const fetchFeeds = async (site: string) => {
-    const functions = sites[site];
+    const functions = sites[site]["functions"];
     try {
       const feeds = await invoke(`fetch_${site}_feeds`);
       functions[0](feeds as string);
