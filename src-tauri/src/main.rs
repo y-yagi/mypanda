@@ -22,10 +22,13 @@ struct FeedItem {
 
 async fn fetch_feeds(
     url: &str,
+    force: bool,
     storage: tauri::State<'_, Storage>,
 ) -> Result<String, Box<dyn Error>> {
-    if let Some(v) = storage.store.lock().unwrap().get(url) {
-        return Ok(v.to_string());
+    if !force {
+        if let Some(v) = storage.store.lock().unwrap().get(url) {
+            return Ok(v.to_string());
+        }
     }
 
     let response = reqwest::get(url).await?.bytes().await?;
@@ -66,29 +69,45 @@ async fn fetch_feeds(
 }
 
 #[tauri::command(async)]
-async fn fetch_hackernews_feeds(storage: tauri::State<'_, Storage>) -> Result<String, String> {
-    fetch_feeds("https://news.ycombinator.com/rss", storage)
+async fn fetch_hackernews_feeds(
+    force: bool,
+    storage: tauri::State<'_, Storage>,
+) -> Result<String, String> {
+    fetch_feeds("https://news.ycombinator.com/rss", force, storage)
         .await
         .map_err(|err| err.to_string())
 }
 
 #[tauri::command(async)]
-async fn fetch_reddit_feeds(storage: tauri::State<'_, Storage>) -> Result<String, String> {
-    fetch_feeds("https://www.reddit.com/r/news/.rss", storage)
+async fn fetch_reddit_feeds(
+    force: bool,
+    storage: tauri::State<'_, Storage>,
+) -> Result<String, String> {
+    fetch_feeds("https://www.reddit.com/r/news/.rss", force, storage)
         .await
         .map_err(|err| err.to_string())
 }
 
 #[tauri::command(async)]
-async fn fetch_github_trending_feeds(storage: tauri::State<'_, Storage>) -> Result<String, String> {
-    fetch_feeds("https://github-rss.alexi.sh/feeds/daily/all.xml", storage)
-        .await
-        .map_err(|err| err.to_string())
+async fn fetch_github_trending_feeds(
+    force: bool,
+    storage: tauri::State<'_, Storage>,
+) -> Result<String, String> {
+    fetch_feeds(
+        "https://github-rss.alexi.sh/feeds/daily/all.xml",
+        force,
+        storage,
+    )
+    .await
+    .map_err(|err| err.to_string())
 }
 
 #[tauri::command(async)]
-async fn fetch_verge_feeds(storage: tauri::State<'_, Storage>) -> Result<String, String> {
-    fetch_feeds("https://www.theverge.com/rss/index.xml", storage)
+async fn fetch_verge_feeds(
+    force: bool,
+    storage: tauri::State<'_, Storage>,
+) -> Result<String, String> {
+    fetch_feeds("https://www.theverge.com/rss/index.xml", force, storage)
         .await
         .map_err(|err| err.to_string())
 }

@@ -49,7 +49,7 @@ function App() {
       Object.keys(sites).forEach(async (site) => {
         const obj = sites[site];
         if (obj["state"].length === 0) {
-          await fetchFeeds(site);
+          await fetchFeeds(site, false);
         }
       });
     })();
@@ -63,10 +63,10 @@ function App() {
     }
   };
 
-  const fetchFeeds = async (site: string) => {
+  const fetchFeeds = async (site: string, force: boolean) => {
     const functions = sites[site]["functions"];
     try {
-      const feeds = await invoke(`fetch_${site}_feeds`);
+      const feeds = await invoke(`fetch_${site}_feeds`, { force: force });
       functions[0](feeds as string);
       functions[1]("");
     } catch (err) {
@@ -88,7 +88,7 @@ function App() {
             <a
               href="#"
               onClick={async () => {
-                await fetchFeeds(site);
+                await fetchFeeds(site, true);
               }}
             >
               <h4 className={`font-bold text-[${sites[site]["color"]}]`}>
