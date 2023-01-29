@@ -14,10 +14,34 @@ function App() {
   const [githubTrendingError, setGithubTrendingError] = useState("");
   const [vergeError, setVergeError] = useState("");
   const sites = {
-    hackernews: { functions: [sethackernewsFeeds, sethackernewsError], state: hackernewsFeeds },
-    reddit: { functions: [setRedditFeeds, setRedditError], state: redditFeeds, },
-    github_trending: { functions: [setGithubTrendingFeeds, setGithubTrendingError], state: githubTrendingFeeds },
-    verge: { functions: [setVergeFeeds, setVergeError], state: vergeFeeds },
+    hackernews: {
+      name: "Hacker News",
+      functions: [sethackernewsFeeds, sethackernewsError],
+      state: hackernewsFeeds,
+      error: hackernewsError,
+      color: "#ff6600",
+    },
+    reddit: {
+      name: "Reddit",
+      functions: [setRedditFeeds, setRedditError],
+      state: redditFeeds,
+      error: redditError,
+      color: "#ff4500",
+    },
+    github_trending: {
+      name: "GitHub Trending",
+      functions: [setGithubTrendingFeeds, setGithubTrendingError],
+      state: githubTrendingFeeds,
+      error: githubTrendingError,
+      color: "#24292f",
+    },
+    verge: {
+      name: "Verge",
+      functions: [setVergeFeeds, setVergeError],
+      state: vergeFeeds,
+      error: vergeError,
+      color: "#5100ff",
+    },
   };
 
   useEffect(() => {
@@ -27,7 +51,7 @@ function App() {
         if (obj["state"].length === 0) {
           await fetchFeeds(site);
         }
-      })
+      });
     })();
 
     document.addEventListener("keydown", onKeyDown);
@@ -59,66 +83,25 @@ function App() {
     <div className="container">
       <h1 className="text-3xl text-red-300 font-bold underline mb-10">Yomu</h1>
       <div className="flex flex-row">
-        <div className="flex-2 mb-10 mr-10">
-          <a
-            href="#"
-            onClick={async () => {
-              await fetchFeeds("hackernews");
-            }}
-          >
-            <h4 className="font-bold text-[#ff6600]">Hacker News</h4>
-          </a>
-          <Feeds
-            feeds={parseFeeds(hackernewsFeeds)}
-            error={hackernewsError}
-            borderColor="border-[#ff6600]"
-          />
-        </div>
-        <div className="flex-2 mb-10 mr-10">
-          <a
-            href="#"
-            onClick={async () => {
-              await fetchFeeds("reddit");
-            }}
-          >
-            <h4 className="font-bold text-[#ff4500]">Reddit</h4>
-          </a>
-          <Feeds
-            feeds={parseFeeds(redditFeeds)}
-            error={redditError}
-            borderColor="border-[#ff4500]"
-          />
-        </div>
-        <div className="flex-2 mb-10 mr-10">
-          <a
-            href="#"
-            onClick={async () => {
-              await fetchFeeds("gihub_feed");
-            }}
-          >
-            <h4 className="font-bold text-[#24292f]">GitHub Trending</h4>
-          </a>
-          <Feeds
-            feeds={parseFeeds(githubTrendingFeeds)}
-            error={githubTrendingError}
-            borderColor="border-[#24292f]"
-          />
-        </div>
-        <div className="flex-2 mb-10 mr-10">
-          <a
-            href="#"
-            onClick={async () => {
-              await fetchFeeds("verge");
-            }}
-          >
-            <h4 className="font-bold text-[#5100ff]">Verge</h4>
-          </a>
-          <Feeds
-            feeds={parseFeeds(vergeFeeds)}
-            error={vergeError}
-            borderColor="border-[#5100ff]"
-          />
-        </div>
+        {Object.keys(sites).map((site, index) => (
+          <div className="flex-2 mb-10 mr-10" key={index}>
+            <a
+              href="#"
+              onClick={async () => {
+                await fetchFeeds(site);
+              }}
+            >
+              <h4 className={`font-bold text-[${sites[site]["color"]}]`}>
+                {sites[site]["name"]}
+              </h4>
+            </a>
+            <Feeds
+              feeds={parseFeeds(sites[site]["state"])}
+              error={sites[site]["error"]}
+              borderColor={`border-[${sites[site]["color"]}]`}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
