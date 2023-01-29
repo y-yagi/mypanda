@@ -3,21 +3,15 @@
     windows_subsystem = "windows"
 )]
 
-use serde::{Deserialize, Serialize};
+mod feed_fetcher;
+
 use std::error::Error;
 use std::{collections::HashMap, str, sync::Mutex};
+use feed_fetcher::FeedFetcher;
 use tauri::Manager;
 
 struct Storage {
     store: Mutex<HashMap<String, String>>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct FeedItem {
-    title: String,
-    link: String,
-    description: String,
-    comments: String,
 }
 
 async fn fetch_feeds(
@@ -31,35 +25,8 @@ async fn fetch_feeds(
         }
     }
 
-    let response = reqwest::get(url).await?.bytes().await?;
-    let body = str::from_utf8(&response)?
-        .to_string()
-        .parse::<syndication::Feed>()?;
+    let v = FeedFetcher::execute(url).await?;
 
-    let feed_items: Vec<FeedItem> = match body {
-        syndication::Feed::Atom(atom_feed) => atom_feed
-            .entries()
-            .iter()
-            .map(|entry| FeedItem {
-                title: entry.title().to_string(),
-                description: "".to_string(),
-                link: entry.links()[0].href().to_string(),
-                comments: "".to_string(),
-            })
-            .collect(),
-        syndication::Feed::RSS(rss_feed) => rss_feed
-            .items()
-            .iter()
-            .map(|item| FeedItem {
-                title: item.title().unwrap_or_default().to_string(),
-                description: item.description().unwrap_or_default().to_string(),
-                link: item.link().unwrap_or_default().to_string(),
-                comments: item.comments().unwrap_or_default().to_string(),
-            })
-            .collect(),
-    };
-
-    let v = serde_json::to_string(&feed_items).unwrap();
     storage
         .store
         .lock()
