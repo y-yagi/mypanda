@@ -3,11 +3,9 @@
     windows_subsystem = "windows"
 )]
 
-mod feed_fetcher;
-
 use std::error::Error;
 use std::{collections::HashMap, str, sync::Mutex};
-use feed_fetcher::FeedFetcher;
+use yomu_tauri::feed_fetcher::FeedFetcher;
 use tauri::Manager;
 
 struct Storage {
