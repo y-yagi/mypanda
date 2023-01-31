@@ -19,28 +19,32 @@ function App() {
       functions: [sethackernewsFeeds, sethackernewsError],
       state: hackernewsFeeds,
       error: hackernewsError,
-      color: "#ff6600",
+      textColor: "text-[#ff6600]",
+      borderColor: "border-[#ff6600]",
     },
     reddit: {
       name: "Reddit",
       functions: [setRedditFeeds, setRedditError],
       state: redditFeeds,
       error: redditError,
-      color: "#ff4500",
+      textColor: "text-[#ff4500]",
+      borderColor: "border-[#ff4500]",
     },
     github_trending: {
       name: "GitHub Trending",
       functions: [setGithubTrendingFeeds, setGithubTrendingError],
       state: githubTrendingFeeds,
       error: githubTrendingError,
-      color: "#24292f",
+      textColor: "text-[#24292f]",
+      borderColor: "border-[#24292f]",
     },
     verge: {
       name: "Verge",
       functions: [setVergeFeeds, setVergeError],
       state: vergeFeeds,
       error: vergeError,
-      color: "#5100ff",
+      textColor: "text-[#5100ff]",
+      borderColor: "border-[#5100ff]",
     },
   };
 
@@ -91,14 +95,14 @@ function App() {
                 await fetchFeeds(site, true);
               }}
             >
-              <h4 className={`font-bold text-[${sites[site]["color"]}]`}>
+              <h4 className={`font-bold ${sites[site]["textColor"]}`}>
                 {sites[site]["name"]}
               </h4>
             </a>
             <Feeds
               feeds={parseFeeds(sites[site]["state"])}
               error={sites[site]["error"]}
-              borderColor={`border-[${sites[site]["color"]}]`}
+              borderColor={sites[site]["borderColor"]}
             />
           </div>
         ))}
