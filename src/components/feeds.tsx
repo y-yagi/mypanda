@@ -30,6 +30,7 @@ const Feeds = ({ feeds, error, borderColor }: Props) => {
               {feed.title}
             </h5>
           </a>
+          {/* Hacker News has a link for comments in both `description` and `comments` tags. This check needs to show only one link. */}
           {feed.description.length > 0 && feed.comments.length === 0 && (
             <p className="text-xs inline-flex items-right text-gray-500">
               {feed.description}
