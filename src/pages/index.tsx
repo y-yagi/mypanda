@@ -94,6 +94,7 @@ function App() {
               onClick={async () => {
                 await fetchFeeds(site, true);
               }}
+              title="reload feeds"
             >
               <h4 className={`font-bold ${sites[site]["textColor"]}`}>
                 {sites[site]["name"]}
