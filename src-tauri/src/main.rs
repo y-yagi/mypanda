@@ -7,6 +7,8 @@ use std::error::Error;
 use std::{collections::HashMap, str, sync::Mutex};
 use yomu_tauri::feed_fetcher::FeedFetcher;
 use tauri::Manager;
+use env_logger;
+use log::info;
 
 struct Storage {
     store: Mutex<HashMap<String, String>>,
@@ -38,6 +40,7 @@ async fn fetch_hackernews_feeds(
     force: bool,
     storage: tauri::State<'_, Storage>,
 ) -> Result<String, String> {
+    info!("call `fetch_hackernews_feeds`");
     fetch_feeds("https://news.ycombinator.com/rss", force, storage)
         .await
         .map_err(|err| err.to_string())
@@ -48,6 +51,7 @@ async fn fetch_reddit_feeds(
     force: bool,
     storage: tauri::State<'_, Storage>,
 ) -> Result<String, String> {
+    info!("call `fetch_reddit_feeds`");
     fetch_feeds("https://www.reddit.com/r/news/.rss", force, storage)
         .await
         .map_err(|err| err.to_string())
@@ -58,6 +62,7 @@ async fn fetch_github_trending_feeds(
     force: bool,
     storage: tauri::State<'_, Storage>,
 ) -> Result<String, String> {
+    info!("call `fetch_github_trending_feeds`");
     fetch_feeds(
         "https://github-rss.alexi.sh/feeds/daily/all.xml",
         force,
@@ -72,6 +77,7 @@ async fn fetch_verge_feeds(
     force: bool,
     storage: tauri::State<'_, Storage>,
 ) -> Result<String, String> {
+    info!("call `fetch_verge_feeds`");
     fetch_feeds("https://www.theverge.com/rss/index.xml", force, storage)
         .await
         .map_err(|err| err.to_string())
@@ -83,6 +89,7 @@ async fn close_window(window: tauri::Window) {
 }
 
 fn main() {
+    env_logger::init();
     tauri::Builder::default()
         .setup(|app| {
             let window = app.get_window("main").unwrap();

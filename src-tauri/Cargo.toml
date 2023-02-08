@@ -21,6 +21,8 @@ tauri = { version = "1.2", features = ["http-all", "shell-open"] }
 syndication = "0.5.0"
 http-test-server = "2.1.0"
 tokio = {version="1.25.0", features= ["macros"] }
+env_logger = "0.10.0"
+log = "0.4.17"
 
 [features]
 # by default Tauri runs in production mode
