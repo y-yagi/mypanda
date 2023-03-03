@@ -1,6 +1,6 @@
 use http_test_server::http::{Method, Status};
 use http_test_server::{TestServer};
-use yomu_tauri::feed_fetcher::FeedFetcher;
+use mypanda::feed_fetcher::FeedFetcher;
 
 #[tokio::test]
 async fn it_works_with_rss() {

@@ -5,7 +5,7 @@
 
 use std::error::Error;
 use std::{collections::HashMap, str, sync::Mutex};
-use yomu_tauri::feed_fetcher::FeedFetcher;
+use mypanda::feed_fetcher::FeedFetcher;
 use tauri::Manager;
 
 struct Storage {
