@@ -4130,7 +4130,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "yomu-tauri"
+name = "mypanda"
 version = "0.0.0"
 dependencies = [
  "env_logger",

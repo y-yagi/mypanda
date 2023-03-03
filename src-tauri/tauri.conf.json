@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "yomu-tauri",
+    "productName": "mypanda",
     "version": "0.0.0"
   },
   "tauri": {
@@ -36,7 +36,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "github.com.y-yagi.yomu-tauri",
+      "identifier": "github.com.y-yagi.mypanda",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -65,7 +65,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "yomu-tauri",
+        "title": "mypanda",
         "width": 800
       }
     ]
