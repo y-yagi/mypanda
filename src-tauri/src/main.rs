@@ -6,7 +6,6 @@
 use std::error::Error;
 use std::{collections::HashMap, str, sync::Mutex};
 use mypanda::feed_fetcher::FeedFetcher;
-use tauri::Manager;
 
 struct Storage {
     store: Mutex<HashMap<String, String>>,
@@ -89,11 +88,6 @@ async fn close_window(window: tauri::Window) {
 fn main() {
     env_logger::init();
     tauri::Builder::default()
-        .setup(|app| {
-            let window = app.get_window("main").unwrap();
-            window.maximize().unwrap();
-            Ok(())
-        })
         .manage(Storage {
             store: Default::default(),
         })
