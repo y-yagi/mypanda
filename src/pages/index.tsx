@@ -69,8 +69,9 @@ function App() {
 
   const fetchFeeds = async (site: string, force: boolean) => {
     const functions = sites[site]["functions"];
+    console.log("*************", site);
     try {
-      const feeds = await invoke(`fetch_${site}_feeds`, { force: force });
+      const feeds = await invoke(`fetch_feeds`, { site: site, force: force });
       functions[0](feeds as string);
       functions[1]("");
     } catch (err) {

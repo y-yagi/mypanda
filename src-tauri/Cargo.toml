@@ -23,6 +23,8 @@ http-test-server = "2.1.0"
 tokio = {version="1.25.0", features= ["macros"] }
 env_logger = "0.10.0"
 log = "0.4.17"
+phf = { version = "0.11", features = ["macros"] }
+
 
 [features]
 # by default Tauri runs in production mode

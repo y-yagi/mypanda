@@ -3,26 +3,38 @@
     windows_subsystem = "windows"
 )]
 
-use std::error::Error;
-use std::{collections::HashMap, str, sync::Mutex};
+use ::phf::{phf_map, Map};
 use mypanda::feed_fetcher::FeedFetcher;
+use std::{collections::HashMap, str, sync::Mutex};
 
 struct Storage {
     store: Mutex<HashMap<String, String>>,
 }
 
+static SITES: Map<&'static str, &'static str> = phf_map! {
+    "hackernews" => "https://news.ycombinator.com/rss",
+    "reddit" => "https://www.reddit.com/r/news/.rss",
+    "github_trending" => "https://github-rss.alexi.sh/feeds/daily/all.xml",
+    "verge" => "https://www.theverge.com/rss/index.xml",
+};
+
+#[tauri::command(async)]
 async fn fetch_feeds(
-    url: &str,
+    site: String,
     force: bool,
     storage: tauri::State<'_, Storage>,
-) -> Result<String, Box<dyn Error>> {
+) -> Result<String, String> {
+    let url = SITES.get(&site).cloned().unwrap();
+
     if !force {
         if let Some(v) = storage.store.lock().unwrap().get(url) {
             return Ok(v.to_string());
         }
     }
 
-    let v = FeedFetcher::execute(url).await?;
+    let v = FeedFetcher::execute(url)
+        .await
+        .map_err(|err| err.to_string())?;
 
     storage
         .store
@@ -30,54 +42,6 @@ async fn fetch_feeds(
         .unwrap()
         .insert(url.to_string(), v.to_string());
     Ok(v)
-}
-
-#[tauri::command(async)]
-async fn fetch_hackernews_feeds(
-    force: bool,
-    storage: tauri::State<'_, Storage>,
-) -> Result<String, String> {
-    log::info!("call `fetch_hackernews_feeds`");
-    fetch_feeds("https://news.ycombinator.com/rss", force, storage)
-        .await
-        .map_err(|err| err.to_string())
-}
-
-#[tauri::command(async)]
-async fn fetch_reddit_feeds(
-    force: bool,
-    storage: tauri::State<'_, Storage>,
-) -> Result<String, String> {
-    log::info!("call `fetch_reddit_feeds`");
-    fetch_feeds("https://www.reddit.com/r/news/.rss", force, storage)
-        .await
-        .map_err(|err| err.to_string())
-}
-
-#[tauri::command(async)]
-async fn fetch_github_trending_feeds(
-    force: bool,
-    storage: tauri::State<'_, Storage>,
-) -> Result<String, String> {
-    log::info!("call `fetch_github_trending_feeds`");
-    fetch_feeds(
-        "https://github-rss.alexi.sh/feeds/daily/all.xml",
-        force,
-        storage,
-    )
-    .await
-    .map_err(|err| err.to_string())
-}
-
-#[tauri::command(async)]
-async fn fetch_verge_feeds(
-    force: bool,
-    storage: tauri::State<'_, Storage>,
-) -> Result<String, String> {
-    log::info!("call `fetch_verge_feeds`");
-    fetch_feeds("https://www.theverge.com/rss/index.xml", force, storage)
-        .await
-        .map_err(|err| err.to_string())
 }
 
 #[tauri::command]
@@ -91,13 +55,7 @@ fn main() {
         .manage(Storage {
             store: Default::default(),
         })
-        .invoke_handler(tauri::generate_handler![
-            close_window,
-            fetch_hackernews_feeds,
-            fetch_reddit_feeds,
-            fetch_github_trending_feeds,
-            fetch_verge_feeds
-        ])
+        .invoke_handler(tauri::generate_handler![close_window, fetch_feeds,])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
