@@ -1,5 +1,6 @@
 import React from "react";
 import Feed from "../types/Feed";
+import { decode } from "html-entities";
 
 type Props = {
   feeds: Feed[];
@@ -27,7 +28,7 @@ const Feeds = ({ feeds, error, borderColor }: Props) => {
         >
           <a href={feed.link} target="_blank" rel="noopener noreferrer">
             <h5 className="text-sm mb-1 hover:underline text-gray-900">
-              {feed.title}
+              {decode(feed.title)}
             </h5>
           </a>
           {/* Hacker News has a link for comments in both `description` and `comments` tags. This check needs to show only one link. */}
