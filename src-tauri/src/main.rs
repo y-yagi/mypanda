@@ -5,6 +5,7 @@
 
 use ::phf::{phf_map, Map};
 use mypanda::feed_fetcher::FeedFetcher;
+use tauri::Manager;
 use std::{collections::HashMap, str, sync::Mutex};
 
 struct Storage {
@@ -52,6 +53,15 @@ async fn close_window(window: tauri::Window) {
 fn main() {
     env_logger::init();
     tauri::Builder::default()
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+            #[cfg(debug_assertions)]
+            {
+                window.open_devtools();
+                window.close_devtools();
+            }
+            Ok(())
+        })
         .manage(Storage {
             store: Default::default(),
         })
