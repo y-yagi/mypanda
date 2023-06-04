@@ -14,7 +14,10 @@ struct FeedItem {
 
 impl FeedFetcher {
     pub async fn execute(url: &str) -> Result<String, Box<dyn Error>> {
-        let response = reqwest::get(url).await?.bytes().await?;
+        let client = reqwest::Client::builder()
+            .user_agent("MyPanda 0.1")
+            .build()?;
+        let response = client.get(url).send().await?.bytes().await?;
         let body = str::from_utf8(&response)?
             .to_string()
             .parse::<syndication::Feed>()?;
